@@ -71,4 +71,20 @@ router.get("/me", protect, async (req, res) => {
   res.json({ user: req.user });
 });
 
+// PATCH /api/auth/profile
+router.patch("/profile", protect, async (req, res) => {
+  try {
+    const { name, email, ward, city } = req.body;
+
+    const user = await User.findByIdAndUpdate(
+      req.user._id,
+      { name, email, ward, city },
+      { new: true }  // return the updated document
+    );
+
+    res.json({ message: "Profile updated.", user });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
 export default router;

@@ -230,4 +230,37 @@ router.post("/:id/rate", protect, async (req, res) => {
   }
 });
 
+// PATCH /api/tickets/:id/citizen-close
+router.patch("/:id/citizen-close", protect, async (req, res) => {
+  try {
+    const { reason } = req.body;
+    const ticket = await Ticket.findById(req.params.id);
+
+    if (!ticket) return res.status(404).json({ message: "Ticket not found." });
+
+    // Only the citizen who raised it can close it
+    if (ticket.citizen.toString() !== req.user._id.toString()) {
+      return res.status(403).json({ message: "You can only close your own tickets." });
+    }
+
+    if (ticket.status === "closed") {
+      return res.status(400).json({ message: "Ticket is already closed." });
+    }
+
+    ticket.status    = "closed";
+    ticket.resolvedAt = new Date();
+    ticket.timeline.push({
+      message: `Citizen closed the ticket. Reason: ${reason}`,
+      by:      "citizen",
+      byLabel: "You",
+      at:      new Date(),
+    });
+
+    await ticket.save();
+    res.json({ message: "Ticket closed.", ticket });
+
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
 export default router;

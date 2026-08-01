@@ -8,6 +8,8 @@ import RaiseTicket from "./pages/RaiseTicket";
 import TicketDetail from "./pages/TicketDetail";
 import WardFeed from "./pages/WardFeed";
 import TrackTicket from "./pages/TrackTicket";
+import ProfilePage from "./pages/ProfilePage";
+
 
 function PrivateRoute({ children }) {
   const { user, loading } = useAuth();
@@ -21,6 +23,7 @@ export default function App() {
       <Route path="/login"    element={<LoginPage />} />
       <Route path="/register" element={<RegisterPage />} />
       <Route path="/track"    element={<TrackTicket />} />
+      <Route path="profile" element={<ProfilePage />} />
       <Route path="/" element={<PrivateRoute><Layout /></PrivateRoute>}>
         <Route index              element={<HomePage />} />
         <Route path="raise"       element={<RaiseTicket />} />
